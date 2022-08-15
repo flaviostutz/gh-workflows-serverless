@@ -23,7 +23,7 @@ on:
         required: false
 
 jobs:
-  remove:
+  package-remove:
     runs-on: ubuntu-latest
     defaults:
       run:
