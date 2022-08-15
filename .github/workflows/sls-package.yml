@@ -9,6 +9,11 @@ on:
         description: '"stage" used on sls operations as parameter --stage'
         required: true
         type: string
+      artifact-retention:
+        description: 'Number of days for retaining the generated artifact. Defaults to 3.'
+        default: 3
+        required: false
+        type: number
 
 jobs:
   build:
@@ -26,3 +31,9 @@ jobs:
     - run: npm ci
     - run: npm test
     - run: npm run package -- --stage ${{ inputs.stage }}
+    - name: 'Upload sls package as artifact'
+      uses: actions/upload-artifact@v3
+      with:
+        name: sls-package
+        path: ${{ inputs.workdir }}/.serverless/
+        retention-days: ${{ inputs.artifact-retention }}
