@@ -50,18 +50,17 @@ jobs:
 
     - name: 'Requirements for "package"'
       run: |
-        npm run | grep lint
-        if [ "$?" == 1 ]; then
+        if [ "$(npm run | grep lint)" == "" ]; then
           echo "Your package.json file must have a script named 'lint'. eg: 'eslint'"
           exit 1
         fi
-        npm run | grep test
-        if [ "$?" == 1 ]; then
+        
+        if [ "$(npm run | grep test)" == "" ]; then
           echo "Your package.json file must have a script named 'test'. eg: 'jest"
           exit 1
         fi
-        npm run | grep package
-        if [ "$?" == 1 ]; then
+        
+        if [ "$(npm run | grep package)" == "" ]; then
           echo "Your package.json file must have a script named 'package'. eg: 'sls package'"
           exit 1
         fi
@@ -86,13 +85,12 @@ jobs:
         fi
         echo $AWS_SECRET_ACCESS_KEY
 
-        npm run | grep deploy
-        if [ "$?" == 1 ]; then
+        if [ "$(npm run | grep deploy)" == "" ]; then
           echo "Your package.json file must have a script named 'deploy'. eg: 'sls deploy'"
           exit 1
         fi
-        npm run | grep remove
-        if [ "$?" == 1 ]; then
+        
+        if [ "$(npm run | grep remove)" == "" ]; then
           echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
           exit 1
         fi
