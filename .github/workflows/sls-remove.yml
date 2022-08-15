@@ -65,8 +65,8 @@ jobs:
         fi
         echo $AWS_SECRET_ACCESS_KEY
 
-        if [ "$(npm run | grep remove)" == "" ]; then
-          echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
+        if [ "$(npm run | grep sls:remove)" == "" ]; then
+          echo "Your package.json file must have a script named 'sls:remove'. eg: 'sls remove'"
           exit 1
         fi
 
@@ -74,7 +74,7 @@ jobs:
       run: npm ci
 
     - name: Run serverless remove with stage "${{ inputs.stage }}"
-      run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run remove -- --stage ${{ inputs.stage }}
+      run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:remove -- --stage ${{ inputs.stage }}
 
 
 

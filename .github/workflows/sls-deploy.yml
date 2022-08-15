@@ -69,8 +69,8 @@ jobs:
           exit 1
         fi
         
-        if [ "$(npm run | grep package)" == "" ]; then
-          echo "Your package.json file must have a script named 'package'. eg: 'sls package'"
+        if [ "$(npm run | grep sls:package)" == "" ]; then
+          echo "Your package.json file must have a script named 'sls:package'. eg: 'sls package'"
           exit 1
         fi
 
@@ -91,13 +91,13 @@ jobs:
           fi
           echo $AWS_SECRET_ACCESS_KEY
 
-          if [ "$(npm run | grep deploy)" == "" ]; then
-            echo "Your package.json file must have a script named 'deploy'. eg: 'sls deploy'"
+          if [ "$(npm run | grep sls:deploy)" == "" ]; then
+            echo "Your package.json file must have a script named 'sls:deploy'. eg: 'sls deploy'"
             exit 1
           fi
           
-          if [ "$(npm run | grep remove)" == "" ]; then
-            echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
+          if [ "$(npm run | grep sls:remove)" == "" ]; then
+            echo "Your package.json file must have a script named 'sls:remove'. eg: 'sls remove'"
             exit 1
           fi
         fi
@@ -112,7 +112,7 @@ jobs:
       run: npm test
 
     - name: Run serverless package with stage "${{ inputs.stage }}"
-      run: npm run package -- --stage ${{ inputs.stage }}
+      run: npm run sls:package -- --stage ${{ inputs.stage }}
 
     - name: Upload package to GH artifact
       uses: actions/upload-artifact@v3
@@ -122,7 +122,7 @@ jobs:
         retention-days: ${{ inputs.artifact-retention }}
     
     - name: Deploy to AWS
-      run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run deploy -- --stage ${{ inputs.stage }}
+      run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:deploy -- --stage ${{ inputs.stage }}
       if: ${{ inputs.deploy }}
 
     - name: Info
