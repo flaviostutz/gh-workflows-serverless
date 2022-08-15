@@ -125,6 +125,6 @@ jobs:
       if: ${{ inputs.deploy }}
 
     - name: Deploy to AWS
-      run: npm run deploy -- --stage ${{ inputs.stage }}
+      run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run deploy -- --stage ${{ inputs.stage }}
       if: ${{ inputs.deploy }}
 
