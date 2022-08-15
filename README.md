@@ -4,6 +4,10 @@ This repo contains a set of github actions workflows for common build, test, che
 
 For a complete example on how to use it, check https://github.com/flaviostutz/aws-serverless-static-website, specifically looking at the files at .github/workflows
 
+Watch a demo video below:
+
+[<img src="screenshot.png" width=500 />](https://youtu.be/oe222JeSOsY)
+
 ## Usage
 
 * Create a file on the repository of your project at .github/workflows with the workflow definitions, and make it use the workflow from this repo
