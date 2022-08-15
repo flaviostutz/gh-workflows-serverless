@@ -91,6 +91,12 @@ jobs:
           echo "Your package.json file must have a script named 'deploy'. eg: 'sls deploy'"
           exit 1
         fi
+        npm run | grep remove
+        if [ "$?" == 1 ]; then
+          echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
+          exit 1
+        fi
+
         echo "Requirements OK"
       if: ${{ inputs.deploy }}
 
