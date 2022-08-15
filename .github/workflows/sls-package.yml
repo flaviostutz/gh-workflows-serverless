@@ -2,6 +2,11 @@ on:
   workflow_call:
     inputs:
       workdir:
+        description: 'base dir used during builds. If using monorepo, specify the relative path of the service folder. ex.: ./services/example1'
+        required: true
+        type: string
+      stage:
+        description: '"stage" used on sls operations as parameter --stage'
         required: true
         type: string
 
@@ -20,4 +25,4 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
-    - run: npm run package
+    - run: npm run package --stage ${{ stage }}
