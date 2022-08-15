@@ -48,7 +48,7 @@ jobs:
         node-version: '14'
         cache: 'npm'
 
-    - name: 'Requirements for "package"'
+    - name: 'Validate workflow input and secrets'
       run: |
         if [ "$(npm run | grep lint)" == "" ]; then
           echo "Your package.json file must have a script named 'lint'. eg: 'eslint'"
@@ -64,39 +64,34 @@ jobs:
           echo "Your package.json file must have a script named 'package'. eg: 'sls package'"
           exit 1
         fi
-        echo "Requirements OK"
 
-    - name: 'Requirements for "deploy"'
-      run: |
-      
-        if [ "${{ inputs.AWS_DEFAULT_REGION }}" == "" ]; then
-          echo "'AWS_DEFAULT_REGION' workflow input is required when deploy=true"
-          exit 1
-        fi
+        if [ "${{ inputs.deploy }}" == "true" ]; then
+          if [ "${{ inputs.AWS_DEFAULT_REGION }}" == "" ]; then
+            echo "'AWS_DEFAULT_REGION' workflow input is required when deploy=true"
+            exit 1
+          fi
 
-        if [ "${{ secrets.AWS_ACCESS_KEY_ID }}" == "" ]; then
-          echo "'AWS_ACCESS_KEY_ID' workflow secret is required when deploy=true"
-          exit 1
-        fi
+          if [ "${{ secrets.AWS_ACCESS_KEY_ID }}" == "" ]; then
+            echo "'AWS_ACCESS_KEY_ID' workflow secret is required when deploy=true"
+            exit 1
+          fi
 
-        if [ "${{ secrets.AWS_SECRET_ACCESS_KEY }}" == "" ]; then
-          echo "'AWS_SECRET_ACCESS_KEY' workflow secret is required when deploy=true"
-          exit 1
-        fi
-        echo $AWS_SECRET_ACCESS_KEY
+          if [ "${{ secrets.AWS_SECRET_ACCESS_KEY }}" == "" ]; then
+            echo "'AWS_SECRET_ACCESS_KEY' workflow secret is required when deploy=true"
+            exit 1
+          fi
+          echo $AWS_SECRET_ACCESS_KEY
 
-        if [ "$(npm run | grep deploy)" == "" ]; then
-          echo "Your package.json file must have a script named 'deploy'. eg: 'sls deploy'"
-          exit 1
+          if [ "$(npm run | grep deploy)" == "" ]; then
+            echo "Your package.json file must have a script named 'deploy'. eg: 'sls deploy'"
+            exit 1
+          fi
+          
+          if [ "$(npm run | grep remove)" == "" ]; then
+            echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
+            exit 1
+          fi
         fi
-        
-        if [ "$(npm run | grep remove)" == "" ]; then
-          echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
-          exit 1
-        fi
-
-        echo "Requirements OK"
-      if: ${{ inputs.deploy }}
 
     - name: Run npm install (${{ inputs.workdir }})
       run: npm ci
