@@ -74,18 +74,21 @@ jobs:
           echo "'AWS_DEFAULT_REGION' workflow input is required when deploy=true"
           exit 1
         fi
+        echo $AWS_DEFAULT_REGION
 
         export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
         if [ "$AWS_ACCESS_KEY_ID" == "" ]; then
           echo "'AWS_ACCESS_KEY_ID' workflow secret is required when deploy=true"
           exit 1
         fi
+        echo $AWS_ACCESS_KEY_ID
 
         export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         if [ "$AWS_SECRET_ACCESS_KEY" == "" ]; then
           echo "'AWS_SECRET_ACCESS_KEY' workflow secret is required when deploy=true"
           exit 1
         fi
+        echo $AWS_SECRET_ACCESS_KEY
 
         npm run | grep deploy
         if [ "$?" == 1 ]; then
