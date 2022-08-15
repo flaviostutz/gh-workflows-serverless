@@ -25,4 +25,4 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
-    - run: npm run package --stage ${{ inputs.stage }}
+    - run: npm run package -- --stage ${{ inputs.stage }}
