@@ -95,7 +95,7 @@ jobs:
         echo "Requirements OK"
       if: ${{ inputs.deploy }}
 
-    - name: Run npm install
+    - name: Run npm install (${{ inputs.workdir }})
       run: npm ci
 
     - name: Run lint
