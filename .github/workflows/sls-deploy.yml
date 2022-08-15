@@ -15,8 +15,9 @@ on:
         required: false
         type: number
       deploy:
-        description: 'Whetever to run package "deploy" or not. You need to specify AWS keys as secret then'
-        required: true
+        description: 'Whetever to run package "deploy" or not. You need to specify AWS keys as secret then.'
+        default: true
+        required: false
         type: boolean
       AWS_DEFAULT_REGION:
         description: 'The AWS region to deploy resources to'
@@ -32,7 +33,7 @@ on:
         required: false
 
 jobs:
-  package:
+  package-deploy:
     runs-on: ubuntu-latest
     defaults:
       run:

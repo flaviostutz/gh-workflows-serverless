@@ -1,0 +1,57 @@
+on:
+  workflow_call:
+    inputs:
+      workdir:
+        description: 'base dir used during builds. If using monorepo, specify the relative path of the service folder. ex.: ./services/example1'
+        required: true
+        type: string
+      stage:
+        description: '"stage" used on sls operations as parameter --stage'
+        required: true
+        type: string
+      AWS_DEFAULT_REGION:
+        description: 'The AWS region to deploy resources to'
+        default: ''
+        required: false
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        description: 'AWS Access Key ID'
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        description: 'AWS Secret Access Key'
+        required: false
+
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.workdir }}
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+        cache: 'npm'
+
+    - name: 'Requirements for "remove"'
+      run: |
+        npm run | grep remove
+        if [ "$?" == 1 ]; then
+          echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
+          exit 1
+        fi
+        echo "Requirements OK"
+
+    - name: Run npm install (${{ inputs.workdir }})
+      run: npm ci
+
+    - name: Run serverless remove with stage "${{ inputs.stage }}"
+      run: npm run remove -- --stage ${{ inputs.stage }}
+
+
+
