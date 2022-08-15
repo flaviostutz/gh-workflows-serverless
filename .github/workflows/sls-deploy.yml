@@ -19,6 +19,10 @@ on:
         default: true
         required: false
         type: boolean
+      environment: 
+        description: 'Github environment to attach this job to'
+        required: false
+        type: string
       AWS_DEFAULT_REGION:
         description: 'The AWS region to deploy resources to'
         default: ''
@@ -35,10 +39,14 @@ on:
 jobs:
   package-deploy:
     runs-on: ubuntu-latest
+    
     defaults:
       run:
         shell: bash
         working-directory: ${{ inputs.workdir }}
+
+    environment: ${{ inputs.environment }}
+
     steps:
 
     - uses: actions/checkout@v3
