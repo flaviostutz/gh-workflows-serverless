@@ -14,6 +14,22 @@ on:
         default: 3
         required: false
         type: number
+      deploy:
+        description: 'Whetever to run package "deploy" or not. You need to specify AWS keys as secret then'
+        required: true
+        type: boolean
+      AWS_DEFAULT_REGION:
+        description: 'The AWS region to deploy resources to'
+        default: ''
+        required: false
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        description: 'AWS Access Key ID'
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        description: 'AWS Secret Access Key'
+        required: false
 
 jobs:
   build:
@@ -23,17 +39,82 @@ jobs:
         shell: bash
         working-directory: ${{ inputs.workdir }}
     steps:
+
     - uses: actions/checkout@v3
+
     - uses: actions/setup-node@v3
       with:
         node-version: '14'
         cache: 'npm'
-    - run: npm ci
-    - run: npm test
-    - run: npm run package -- --stage ${{ inputs.stage }}
-    - name: 'Upload sls package as artifact'
+
+    - name: 'Requirements for "package"'
+      run: |
+        npm run | grep lint
+        if [ "$?" == 1 ]; then
+          echo "Your package.json file must have a script named 'lint'. eg: 'eslint'"
+          exit 1
+        fi
+        npm run | grep test
+        if [ "$?" == 1 ]; then
+          echo "Your package.json file must have a script named 'test'. eg: 'jest"
+          exit 1
+        fi
+        npm run | grep package
+        if [ "$?" == 1 ]; then
+          echo "Your package.json file must have a script named 'package'. eg: 'sls package'"
+          exit 1
+        fi
+        echo "Requirements OK"
+
+    - name: 'Requirements for "deploy"'
+      run: |
+      
+        export AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }}
+        if [ "$AWS_DEFAULT_REGION" == "" ]; then
+          echo "'AWS_DEFAULT_REGION' workflow input is required when deploy=true"
+          exit 1
+        fi
+
+        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+        if [ "$AWS_ACCESS_KEY_ID" == "" ]; then
+          echo "'AWS_ACCESS_KEY_ID' workflow secret is required when deploy=true"
+          exit 1
+        fi
+
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        if [ "$AWS_SECRET_ACCESS_KEY" == "" ]; then
+          echo "'AWS_SECRET_ACCESS_KEY' workflow secret is required when deploy=true"
+          exit 1
+        fi
+
+        npm run | grep deploy
+        if [ "$?" == 1 ]; then
+          echo "Your package.json file must have a script named 'deploy'. eg: 'sls deploy'"
+          exit 1
+        fi
+        echo "Requirements OK"
+      if: ${{ inputs.deploy }}
+
+    - name: Installing NPM dependencies
+      run: npm ci
+
+    - name: Run lint
+      run: npm run lint
+
+    - name: Run tests
+      run: npm test
+
+    - name: Run serverless package with stage ${{ inputs.stage }}
+      run: npm run package -- --stage ${{ inputs.stage }}
+
+    - name: Upload package to gh artifact
       uses: actions/upload-artifact@v3
       with:
-        name: sls-package
+        name: sls-package-${{ inputs.stage }}
         path: ${{ inputs.workdir }}/.serverless/
         retention-days: ${{ inputs.artifact-retention }}
+    
+    - name: Deploy to AWS
+      run: npm run deploy -- --stage ${{ inputs.stage }}
+      if: ${{ inputs.deploy }}
+
