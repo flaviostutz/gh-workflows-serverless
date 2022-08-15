@@ -117,6 +117,13 @@ jobs:
         path: ${{ inputs.workdir }}/.serverless/
         retention-days: ${{ inputs.artifact-retention }}
     
+    - name: 'AWS Credentials'
+      run: |
+        echo $AWS_DEFAULT_REGION
+        echo $AWS_ACCESS_KEY_ID
+        echo $AWS_SECRET_ACCESS_KEY
+      if: ${{ inputs.deploy }}
+
     - name: Deploy to AWS
       run: npm run deploy -- --stage ${{ inputs.stage }}
       if: ${{ inputs.deploy }}
