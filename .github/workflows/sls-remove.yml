@@ -40,8 +40,7 @@ jobs:
 
     - name: 'Requirements for "remove"'
       run: |
-        npm run | grep remove
-        if [ "$?" == 1 ]; then
+        if [ "$(npm run | grep remove)" == "" ]; then
           echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
           exit 1
         fi
