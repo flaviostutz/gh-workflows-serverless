@@ -38,19 +38,34 @@ jobs:
         node-version: '14'
         cache: 'npm'
 
-    - name: 'Requirements for "remove"'
-      run: |
+    - name: 'Validate workflow input and secrets'
+      run: |      
+        if [ "${{ inputs.AWS_DEFAULT_REGION }}" == "" ]; then
+          echo "'AWS_DEFAULT_REGION' workflow input is required when deploy=true"
+          exit 1
+        fi
+
+        if [ "${{ secrets.AWS_ACCESS_KEY_ID }}" == "" ]; then
+          echo "'AWS_ACCESS_KEY_ID' workflow secret is required when deploy=true"
+          exit 1
+        fi
+
+        if [ "${{ secrets.AWS_SECRET_ACCESS_KEY }}" == "" ]; then
+          echo "'AWS_SECRET_ACCESS_KEY' workflow secret is required when deploy=true"
+          exit 1
+        fi
+        echo $AWS_SECRET_ACCESS_KEY
+
         if [ "$(npm run | grep remove)" == "" ]; then
           echo "Your package.json file must have a script named 'remove'. eg: 'sls remove'"
           exit 1
         fi
-        echo "Requirements OK"
 
     - name: Run npm install (${{ inputs.workdir }})
       run: npm ci
 
     - name: Run serverless remove with stage "${{ inputs.stage }}"
-      run: npm run remove -- --stage ${{ inputs.stage }}
+      run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run remove -- --stage ${{ inputs.stage }}
 
 
 
