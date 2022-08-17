@@ -137,9 +137,9 @@ jobs:
       env:
         DEPLOY_STDOUT: ${{ steps.sls-deploy.outputs.stdout }}  
       run: |
-        echo ">>>00"
+        echo "00"
         echo $DEPLOY_STDOUT
-        echo "<<<<00""
+        echo "00""
 
         # if environment-url set as workflow input, use it
         if [ "${{ inputs.environment-url }}" != "" ]; then
@@ -149,9 +149,9 @@ jobs:
           exit 0
         fi
 
-        echo ">>>11"
+        echo "11"
         echo $DEPLOY_STDOUT
-        echo "<<<<11""
+        echo "11""
 
         # extract URL from sls print results
         OUT_URL=$(npm run sls:print --if-present | grep -Eo "environment-url: (http|https)://[a-zA-Z0-9./?=_%:-]*" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
@@ -162,9 +162,9 @@ jobs:
           exit 0
         fi
 
-        echo ">>>"
+        echo "22"
         echo $DEPLOY_STDOUT
-        echo "<<<<""
+        echo "22""
 
         # extract URL from sls deploy results
         OUT_URL=$(echo $DEPLOY_STDOUT | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
