@@ -171,14 +171,14 @@ jobs:
         # echo $DEPLOY_STDOUT
         # echo "22""
 
-        # # extract URL from sls deploy results
-        # OUT_URL=$(echo $DEPLOY_STDOUT | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
-        # if [ "$OUT_URL" != "" ]; then
-        #   echo "Setting environment-url from 'sls deploy' results"
-        #   echo url=${OUT_URL}
-        #   echo "::set-output name=environment-url::${OUT_URL}"
-        #   exit 0
-        # fi
+        # extract URL from sls deploy results
+        OUT_URL=$(echo $DEPLOY_STDOUT | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
+        if [ "$OUT_URL" != "" ]; then
+          echo "Setting environment-url from 'sls deploy' results"
+          echo url=${OUT_URL}
+          echo "::set-output name=environment-url::${OUT_URL}"
+          exit 0
+        fi
 
         # echo "No URL found as input 'environment-url', on the output of 'sls:print' nor 'sls:deploy' results"
       if: ${{ inputs.deploy }}
