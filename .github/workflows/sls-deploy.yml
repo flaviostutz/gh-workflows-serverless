@@ -163,7 +163,7 @@ jobs:
         # extract URL from sls deploy with "ServiceEndpoint" output in stack
         OUT_URL=$(echo $DEPLOY_STDOUT | { grep -Eo "ServiceEndpoint: (http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
         if [ "$OUT_URL" != "" ]; then
-          echo "Setting environment-url from 'sls deploy' results"
+          echo "Setting environment-url from 'sls deploy' ServiceEndpoint stack output"
           echo url=${OUT_URL}
           echo "::set-output name=environment-url::${OUT_URL}"
           exit 0
