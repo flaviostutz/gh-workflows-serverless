@@ -130,7 +130,7 @@ jobs:
     - name: Deploy to AWS
       id: sls-deploy
       run: |
-        npm run sls:deploy -- --stage ${{ inputs.stage }}
+        echo "npm run sls:deploy -- --stage ${{ inputs.stage }}"
         AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:deploy -- --stage ${{ inputs.stage }}
       if: ${{ inputs.deploy }}
 
