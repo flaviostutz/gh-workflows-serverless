@@ -48,9 +48,9 @@ jobs:
 ```json
     "lint": "eslint",
     "test": "jest",
-    "package": "sls package",
-    "deploy": "sls deploy",
-    "remove": "sls remove"
+    "sls:package": "sls package",
+    "sls:deploy": "sls deploy",
+    "sls:remove": "sls remove"
 ```
 
 Change these at will
@@ -65,12 +65,30 @@ For skipping test, for example, use something like
 * artifact-retention: Number of days for retaining the generated artifact. Defaults to 3.
 * deploy: Whetever to run package "deploy" or not. You need to specify AWS keys as secret then.
 * environment: Github environment to attach this job to
+* environment-url: Value to set as environment URL
 * AWS_DEFAULT_REGION: The AWS region to deploy resources to
 
 ### Workflow secrets
 
 * AWS_ACCESS_KEY_ID: AWS Access Key ID with permission to deploy resources
 * AWS_SECRET_ACCESS_KEY:AWS Secret Access Key
+
+### GH Environment URL
+
+* This workflow will do a best effort to get a environment URL, in this order:
+  * If a value is set as workflow input in 'environment-url', use it
+  * If the result of the command 'sls print' returns an output name "environment-url: URL", use this value
+
+    In your serverless.yml
+
+    ```yml
+    ...
+    outputs:
+      # used by pipeline to set environment url in GH
+      environment-url: http://${param:siteName}
+    ```
+
+  * If the result of the command 'sls deploy' returns an URL, which is common when deploying an API, use the first URL found
 
 ## More examples
 

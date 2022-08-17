@@ -143,7 +143,7 @@ jobs:
         fi
 
         # extract URL from sls print results
-        OUT_URL=$(sls print | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
+        OUT_URL=$(sls print | | grep -Eo "environment-url: (http|https)://[a-zA-Z0-9./?=_%:-]*" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
         if [ "$OUT_URL" != "" ]; then
           echo "Setting environment-url from 'sls print' results"
           echo url=${OUT_URL}
