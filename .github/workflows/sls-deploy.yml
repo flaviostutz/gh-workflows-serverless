@@ -51,7 +51,7 @@ jobs:
 
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ inputs.environment-url }}
+      url: ${{ steps.sls-deploy.outputs.environment-url }}
 
     steps:
 
@@ -128,7 +128,38 @@ jobs:
         retention-days: ${{ inputs.artifact-retention }}
     
     - name: Deploy to AWS
-      run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:deploy -- --stage ${{ inputs.stage }}
+      id: sls-deploy
+      run: |
+        echo "Running 'npm run sls:deploy -- --stage ${{ inputs.stage }}'"
+        RESULT=$(AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:deploy -- --stage ${{ inputs.stage }})
+        echo $RESULT
+
+        # if environment-url set from input, use it
+        if [ "${{ inputs.environment-url }}" != "" ]; then
+          echo "Setting environment-url from workflow input"
+          echo environment-url=${OUT_URL}
+          echo "::set-output name=environment-url::${{ inputs.environment-url }}"
+          exit 0
+        fi
+
+        # extract URL from sls deploy results
+        OUT_URL=$(echo $RESULT | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
+        if [ "$OUT_URL" != "" ]; then
+          echo "Setting environment-url from 'sls deploy' results"
+          echo url=${OUT_URL}
+          echo "::set-output name=environment-url::${OUT_URL}"
+          exit 0
+        fi
+
+        # extract URL from sls print results
+        OUT_URL=$(sls print | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
+        if [ "$OUT_URL" != "" ]; then
+          echo "Setting environment-url from 'sls print' results"
+          echo url=${OUT_URL}
+          echo "::set-output name=environment-url::${OUT_URL}"
+          exit 0
+        fi
+
       if: ${{ inputs.deploy }}
 
     - name: Info
