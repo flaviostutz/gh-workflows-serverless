@@ -117,7 +117,7 @@ jobs:
     - name: Run tests
       run: npm test
 
-    - name: Run serverless package with stage "${{ inputs.stage }}"
+    - name: Run serverless package (stage ${{ inputs.stage }})
       run: npm run sls:package -- --stage ${{ inputs.stage }}
 
     - name: Upload package to GH artifact
