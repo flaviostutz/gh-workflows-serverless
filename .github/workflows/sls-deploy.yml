@@ -128,8 +128,10 @@ jobs:
         retention-days: ${{ inputs.artifact-retention }}
     
     - name: Deploy to AWS
+      uses: mathiasvr/command-output@v1
       id: sls-deploy
-      run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:deploy -- --stage ${{ inputs.stage }}
+      with:
+        run: AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:deploy -- --stage ${{ inputs.stage }}
       if: ${{ inputs.deploy }}
 
     - name: Set environment URL
@@ -154,7 +156,7 @@ jobs:
         echo "11""
 
         # extract URL from sls print results
-        OUT_URL=$(npm run sls:print --if-present | grep -Eo "environment-url: (http|https)://[a-zA-Z0-9./?=_%:-]*" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
+        OUT_URL=$(npm run sls:print --if-present | { grep -Eo "environment-url: (http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
         if [ "$OUT_URL" != "" ]; then
           echo "Setting environment-url from 'sls print' results"
           echo url=${OUT_URL}
@@ -167,7 +169,7 @@ jobs:
         echo "22""
 
         # extract URL from sls deploy results
-        OUT_URL=$(echo $DEPLOY_STDOUT | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
+        OUT_URL=$(echo $DEPLOY_STDOUT | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
         if [ "$OUT_URL" != "" ]; then
           echo "Setting environment-url from 'sls deploy' results"
           echo url=${OUT_URL}
