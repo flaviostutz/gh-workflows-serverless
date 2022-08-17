@@ -77,7 +77,7 @@ For skipping test, for example, use something like
 
 * This workflow will do a best effort to get a environment URL, in this order:
   * If a value is set as workflow input in 'environment-url', use it
-  * If the result of the command 'sls print' returns an output name "environment-url: URL", use this value
+  * If you have the script 'sls:print' in your package.json and it returns an output as "environment-url: URL", use this value
 
     In your serverless.yml
 
@@ -87,6 +87,8 @@ For skipping test, for example, use something like
       # used by pipeline to set environment url in GH
       environment-url: http://${param:siteName}
     ```
+
+    In your package.json, add script "sls:print": "sls print"
 
   * If the result of the command 'sls deploy' returns an URL, which is common when deploying an API, use the first URL found
 
