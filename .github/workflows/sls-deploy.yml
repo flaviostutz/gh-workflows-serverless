@@ -162,6 +162,8 @@ jobs:
           echo "::set-output name=environment-url::${OUT_URL}"
           exit 0
         fi
+
+        echo "No URL found as input 'environment-url', on the output of 'sls:print' nor 'sls:deploy' results"
       if: ${{ inputs.deploy }}
 
     - name: Info
