@@ -152,7 +152,10 @@ jobs:
         fi
 
         # extract URL from sls print results
-        OUT_URL=$(npm run sls:print --if-present | { grep -Eo "environment-url: (http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
+        echo "npm run sls:print"
+        PRINT_OUT=$(npm run sls:print --if-present)
+        echo $PRINT_OUT
+        OUT_URL=$(echo $PRINT_OUT | { grep -Eo "environment-url: (http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
         if [ "$OUT_URL" != "" ]; then
           echo "Setting environment-url from 'sls print' results"
           echo url=${OUT_URL}
