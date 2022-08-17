@@ -142,9 +142,6 @@ jobs:
       env:
         DEPLOY_STDOUT: ${{ steps.sls-deploy.outputs.stdout }}  
       run: |
-        # echo "00"
-        # echo $DEPLOY_STDOUT
-        # echo "00""
 
         # if environment-url set as workflow input, use it
         if [ "${{ inputs.environment-url }}" != "" ]; then
@@ -153,10 +150,6 @@ jobs:
           echo "::set-output name=environment-url::${{ inputs.environment-url }}"
           exit 0
         fi
-
-        # echo "11"
-        # echo $DEPLOY_STDOUT
-        # echo "11""
 
         # extract URL from sls print results
         OUT_URL=$(npm run sls:print --if-present | { grep -Eo "environment-url: (http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
@@ -167,11 +160,16 @@ jobs:
           exit 0
         fi
 
-        # echo "22"
-        # echo $DEPLOY_STDOUT
-        # echo "22""
+        # extract URL from sls deploy with "ServiceEndpoint" output in stack
+        OUT_URL=$(echo $DEPLOY_STDOUT | { grep -Eo "ServiceEndpoint: (http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
+        if [ "$OUT_URL" != "" ]; then
+          echo "Setting environment-url from 'sls deploy' results"
+          echo url=${OUT_URL}
+          echo "::set-output name=environment-url::${OUT_URL}"
+          exit 0
+        fi
 
-        # extract URL from sls deploy results
+        # extract URL from sls deploy with any URL found in output
         OUT_URL=$(echo $DEPLOY_STDOUT | { grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" || true; } | head -1)
         if [ "$OUT_URL" != "" ]; then
           echo "Setting environment-url from 'sls deploy' results"
@@ -180,7 +178,8 @@ jobs:
           exit 0
         fi
 
-        # echo "No URL found as input 'environment-url', on the output of 'sls:print' nor 'sls:deploy' results"
+        echo "No URL found as input 'environment-url', on the output of 'sls:print' nor 'sls:deploy' results"
+
       if: ${{ inputs.deploy }}
 
     - name: Info
