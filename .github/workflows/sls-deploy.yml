@@ -142,19 +142,19 @@ jobs:
           exit 0
         fi
 
-        # extract URL from sls deploy results
-        OUT_URL=$(echo $RESULT | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
+        # extract URL from sls print results
+        OUT_URL=$(sls print | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
         if [ "$OUT_URL" != "" ]; then
-          echo "Setting environment-url from 'sls deploy' results"
+          echo "Setting environment-url from 'sls print' results"
           echo url=${OUT_URL}
           echo "::set-output name=environment-url::${OUT_URL}"
           exit 0
         fi
 
-        # extract URL from sls print results
-        OUT_URL=$(sls print | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
+        # extract URL from sls deploy results
+        OUT_URL=$(echo $RESULT | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | head -1)
         if [ "$OUT_URL" != "" ]; then
-          echo "Setting environment-url from 'sls print' results"
+          echo "Setting environment-url from 'sls deploy' results"
           echo url=${OUT_URL}
           echo "::set-output name=environment-url::${OUT_URL}"
           exit 0
