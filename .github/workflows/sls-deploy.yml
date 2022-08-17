@@ -19,8 +19,12 @@ on:
         default: true
         required: false
         type: boolean
-      environment: 
+      environment:
         description: 'Github environment to attach this job to'
+        required: false
+        type: string
+      environment-url:
+        description: 'Github environment url'
         required: false
         type: string
       AWS_DEFAULT_REGION:
@@ -45,7 +49,9 @@ jobs:
         shell: bash
         working-directory: ${{ inputs.workdir }}
 
-    environment: ${{ inputs.environment }}
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.environment-url }}
 
     steps:
 
