@@ -53,8 +53,10 @@ jobs:
       name: ${{ inputs.environment }}
       url: ${{ steps.env-url.outputs.environment-url }}
 
-    steps:
+    outputs:
+      environment-url: ${{ steps.env-url.outputs.environment-url }}
 
+    steps:
     - uses: actions/checkout@v3
 
     - uses: actions/setup-node@v3
