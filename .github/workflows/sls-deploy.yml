@@ -19,6 +19,11 @@ on:
         default: true
         required: false
         type: boolean
+      integration-test:
+        description: 'Run integration tests after deploy. You need package script "test:integration" then'
+        default: true
+        required: false
+        type: boolean
       environment:
         description: 'Github environment to attach this job to'
         required: false
@@ -189,3 +194,7 @@ jobs:
 
     - name: Info
       run: npm run info --if-present || true
+
+    - name: Run integration tests
+      run: npm run test:integration --if-present
+
