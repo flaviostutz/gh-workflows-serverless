@@ -4,6 +4,8 @@ This repo contains a set of github actions workflows for common build, test, che
 
 For a complete example on how to use it, check https://github.com/flaviostutz/aws-serverless-static-website, specifically looking at the files at .github/workflows
 
+Another good monorepo example can be found at https://github.com/flaviostutz/aws-serverless-monorepo-demo
+
 Watch a demo video below:
 
 [<img src="screenshot.png" width=500 />](https://youtu.be/oe222JeSOsY)
@@ -52,6 +54,29 @@ jobs:
     "sls:deploy": "sls deploy",
     "sls:remove": "sls remove"
 ```
+
+### package.json optional scripts
+
+```json
+    "info": "echo 'anything here you want to show in ci log here'"
+    "test:integration": "jest --config jest.config.integration.js"
+    "sls:print": "sls print",
+```
+
+* *test:integration* - script that will be run after deploying the stack for doing integration tests
+
+* *sls:print* - if the default output of deploy doesn't contain a base service URL (for example, if the deployment doesn't have an API gateway), you might want to indicate what is the environment-url (set in GH action) by printing the processed serverless.yml file (with command sls print). Create a "environment-url" in output section that will be gotten by the pipeline. See an example at https://github.com/flaviostutz/aws-serverless-static-website.
+
+serverless.yml
+
+```yml
+outputs:
+  # used by pipeline to set environment url in GH 
+  environment-url: http://${param:siteName}
+
+```
+
+
 
 Change these at will
 
