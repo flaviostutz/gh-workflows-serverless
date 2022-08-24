@@ -197,4 +197,4 @@ jobs:
 
     - name: Run integration tests
       run: BASE_URL="${{ steps.env-url.outputs.environment-url }}" npm run test:integration --if-present
-      if: ${{ input.integration-tests }}
+      if: ${{ inputs.integration-tests }}
