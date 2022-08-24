@@ -19,7 +19,7 @@ on:
         default: true
         required: false
         type: boolean
-      integration-test:
+      integration-tests:
         description: 'Run integration tests after deploy. You need package script "test:integration" then'
         default: true
         required: false
@@ -196,5 +196,6 @@ jobs:
       run: npm run info --if-present || true
 
     - name: Run integration tests
-      run: npm run test:integration --if-present
-
+      run: |
+        BASE_URL=${{ steps.env-url.outputs.environment-url }} npm run test:integration --if-present
+      if: ${{ input.integration-tests }}

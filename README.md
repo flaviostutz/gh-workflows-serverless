@@ -92,6 +92,8 @@ For skipping test, for example, use something like
 
   * If the result of the command 'sls deploy' returns an URL, which is common when deploying an API, use the first URL found
 
+  * The environment url will be exposed via environment variable "BASE_URL" to your tests when running integration tests. Integration tests are automatically run, by default, if you have a script named "test:integration" in your package.json file.
+
 ## More examples
 
 ### https://github.com/flaviostutz/aws-serverless-static-website
