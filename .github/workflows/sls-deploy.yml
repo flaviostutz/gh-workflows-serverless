@@ -32,6 +32,10 @@ on:
         description: 'Github environment url'
         required: false
         type: string
+      before-package-script:
+        description: Custom commands to run before invoking sls package/deploy
+        required: false
+        type: string
       AWS_DEFAULT_REGION:
         description: 'The AWS region to deploy resources to'
         default: ''
@@ -125,7 +129,11 @@ jobs:
       run: npm test
 
     - name: Run serverless package (stage ${{ inputs.stage }})
-      run: npm run sls:package -- --stage ${{ inputs.stage }}
+      run: |
+        echo "${{ inputs.before-package-script }}"
+        eval ${{ inputs.before-package-script }}
+        echo "npm run sls:package -- --stage ${{ inputs.stage }}"
+        npm run sls:package -- --stage ${{ inputs.stage }}
 
     - name: Upload package to GH artifact
       uses: actions/upload-artifact@v3
@@ -139,6 +147,8 @@ jobs:
       id: sls-deploy
       with:
         run: |
+          echo "${{ inputs.before-package-script }}"
+          eval ${{ inputs.before-package-script }}
           echo "npm run sls:deploy -- --stage ${{ inputs.stage }}"
           cd ${{ inputs.workdir }}
           AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:deploy -- --stage ${{ inputs.stage }}
