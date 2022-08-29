@@ -160,11 +160,6 @@ jobs:
         DEPLOY_STDOUT: ${{ steps.sls-deploy.outputs.stdout }}  
       run: |
 
-        echo "======="
-        echo "DEPLOY_STDOUT"
-        echo $DEPLOY_STDOUT
-        echo "======="
-
         # if environment-url set as workflow input, use it
         if [ "${{ inputs.environment-url }}" != "" ]; then
           echo "Setting environment-url from workflow input"
