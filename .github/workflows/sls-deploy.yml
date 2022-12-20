@@ -133,7 +133,7 @@ jobs:
         echo "${{ inputs.before-package-script }}"
         eval ${{ inputs.before-package-script }}
         echo "npm run sls:package -- --stage ${{ inputs.stage }}"
-        npm run sls:package -- --stage ${{ inputs.stage }}
+        AWS_DEFAULT_REGION=${{ inputs.AWS_DEFAULT_REGION }} AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run sls:package -- --stage ${{ inputs.stage }}
 
     - name: Upload package to GH artifact
       uses: actions/upload-artifact@v3
