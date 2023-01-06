@@ -1,3 +1,5 @@
+**This repo is deprecated in favor of https://github.com/flaviostutz/gh-makefile**
+
 # github-actions-serverless
 
 This repo contains a set of github actions workflows for common build, test, check and deploy services with Serverless Framework
